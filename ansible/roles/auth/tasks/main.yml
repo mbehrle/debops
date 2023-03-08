@@ -30,7 +30,19 @@
     group: 'root'
     mode: '0644'
   notify: [ 'Update PAM common configuration' ]
-  when: auth_cracklib | bool
+  when: auth_cracklib | bool and
+    ansible_distribution_release not in ["bookworm"]
+
+- name: Configure pam_pwquality
+  ansible.builtin.template:
+    src: 'usr/share/pam-configs/pwquality.j2'
+    dest: '/usr/share/pam-configs/pwquality'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: [ 'Update PAM common configuration' ]
+  when: auth_cracklib | bool and
+    ansible_distribution_release in ["bookworm"]
 
 - name: Configure PAM password history module
   ansible.builtin.include_tasks: pam_pwhistory.yml
