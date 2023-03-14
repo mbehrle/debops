@@ -47,6 +47,24 @@ New DebOps roles
 - The :ref:`debops.miniflux` role can install and manage Miniflux, a web-based,
   minimalistic feed reader written in Go.
 
+- The :ref:`debops.systemd` role is included in the common playbook by default.
+  It configures the :command:`systemd` system and service manager. Both
+  system-wide, as well as user services configured globally can be managed with
+  this role.
+
+- The :ref:`debops.networkd` role can be used to configure the
+  :command:`systemd-networkd` service, part of the :command:`systemd` project
+  responsible for network interface configuration.
+
+- The :ref:`debops.timesyncd` role is used to configure the
+  :command:`systemd-timesyncd` service, a minimal SNTP/NTP client. The role is
+  included in the :file:`layer/common.yml` playbook instead of the
+  :ref:`debops.ntp` role to provide NTP support by default.
+
+- The :ref:`debops.resolved` role is included in the :file:`layer/common.yml`
+  playbook by default, replacing the :ref:`debops.resolvconf` role. It manages
+  the :command:`systemd-resolved` service, a local DNS resolver.
+
 General
 '''''''
 
@@ -56,6 +74,21 @@ General
   idempotency check for enabled Apache 2 modules that works on Debian or Ubuntu
   hosts. The :ref:`debops.apache` Ansible role will use this module instead of
   the original one.
+
+:ref:`debops.avahi` role
+''''''''''''''''''''''''
+
+- The role will ensure that the :command:`systemd-resolved` service Multicast
+  DNS support is disabled to avoid conflict with the :command:`avahi-daemon`
+  service.
+
+:ref:`debops.ferm` role
+'''''''''''''''''''''''
+
+- Multicast DNS traffic is accepted by default in the firewall to allow for the
+  ``.local`` mDNS domain resolution by the :command:`systemd-resolved` service.
+  The role provides a set of variables to limit the traffic by subnet, or
+  disable it completely.
 
 :ref:`debops.icinga_web` role
 '''''''''''''''''''''''''''''
@@ -133,8 +166,8 @@ Updates of upstream application versions
   default has been updated to ``1.6.0``.
 
 - In the :ref:`debops.ipxe` role, the Debian Buster netboot installer version
-  has been updated to the next point release, 10.12. Debian Bullseye has been
-  updated to the next point release as well, 11.4.
+  has been updated to the next point release, 10.13. Debian Bullseye has been
+  updated to the next point release as well, 11.7.
 
 - In the :ref:`debops.netbox` role, the NetBox version has been updated to
   ``v3.4.2``.
@@ -205,6 +238,25 @@ General
   the :file:`ansible/playbooks/layers/` subdirectory. See the new
   :ref:`playbooks` documentation for more details.
 
+- The new :ref:`debops.timesyncd` role has replaced the :ref:`debops.ntp` role
+  as the default NTP service provider in the :file:`layer/common.yml` playbook.
+  Existing hosts shouldn't be affected - the new role can automatically
+  recognize that a different time daemon package is installed on the host and
+  will not try to configure :command:`systemd-timesyncd` service in such case.
+  You might need to add your hosts to the ``[debops_service_ntp]`` Ansible
+  inventory group to keep using the old role.
+
+- The new :ref:`debops.resolved` role has replaced the :ref:`debops.resolvconf`
+  role as the default DNS resolver in the :file:`layer/common.yml` and the
+  bootstrap playbooks. Existing hosts shouldn't be affected, the role detects
+  presence of the ``resolvconf`` APT package and does not modify the host
+  configuration in such case.
+
+- Multiple DebOps Collections on Ansible Galaxy have been merged into a single
+  ``debops.debops`` Collection to prepare the project to switch role references
+  to FQCNs. This is also a test to see if Ansible Galaxy allows >2 MB
+  collection tarballs.
+
 :ref:`debops.apt_preferences` role
 ''''''''''''''''''''''''''''''''''
 
@@ -238,6 +290,12 @@ General
   Edition (default) and Enterprise Edition are supported.
 
   .. __: https://docs.gitlab.com/omnibus/
+
+:ref:`debops.global_handlers` role
+''''''''''''''''''''''''''''''''''
+
+- The :command:`systemd` handlers have been moved to a separate
+  :file:`handlers/systemd.yml` configuration file.
 
 :ref:`debops.icinga` role
 '''''''''''''''''''''''''
@@ -293,6 +351,14 @@ General
   the :command:`certbot --authenticator <plugin>` option explicitly to allow
   use with third-party authenticator plugins that might not support the
   :command:`certbot --<plugin>` syntax.
+
+:ref:`debops.preseed` role
+''''''''''''''''''''''''''
+
+- The default guided partition recipe used by the Debian Installer is changed
+  from ``atomic`` to ``multi``. This should allow for easier changes in the
+  parition layout via LVM due to separate partitions for :file:`/home` and
+  :file:`/var` mount points.
 
 :ref:`debops.python` role
 '''''''''''''''''''''''''
@@ -353,6 +419,11 @@ General
   all occurences of this bug at least also included all digits in the character
   set and the password length was at least 20 characters, this did not result
   in weak passwords.
+
+- The ``ipaddr`` Ansible filter and its aliases used in various roles were
+  renamed to ``ansible.utils.ipaddr`` and its corresponding alias names because
+  Ansible requires use of FQCNs in filters. The ``ansible.utils`` Ansible
+  Collection is now a dependency of the DebOps Collection.
 
 :ref:`debops.apt` role
 ''''''''''''''''''''''
@@ -524,6 +595,14 @@ debops.boxbackup role
   routable IP address. However, rejecting messages for this reason is
   prohibited by :rfc:`5321` section 4.1.4, and sometimes caused deliverability
   issues for Office 365 users.
+
+:ref:`debops.preseed` role
+''''''''''''''''''''''''''
+
+- Fixed an issue with the ``d-i`` keyboard preseed that resulted in the
+  ``keyboard-configuration`` APT package not being installed and configured
+  correctly. The default keymap is changed to ``us`` and the option is no
+  longer based on the system language which might be incorrect in this case.
 
 :ref:`debops.proc_hidepid` role
 '''''''''''''''''''''''''''''''
