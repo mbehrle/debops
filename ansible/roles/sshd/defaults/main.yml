@@ -226,7 +226,7 @@ sshd__trusted_user_ca_keys_file: '/etc/ssh/trusted-user-ca-keys.pem'
 # .. envvar:: sshd__scan_for_host_certs [[[
 #
 # Detect, and add, any host certificates found in /etc/ssh/ that match
-# ssh_host_*_key-cert.pub, as long as the key type matches whats in
+# ssh_host_*_key-cert.pub, as long as the key type matches what's in
 # `sshd__host_keys`
 sshd__scan_for_host_certs: False
                                                                    # ]]]
@@ -247,7 +247,7 @@ sshd__original_configuration:
   - name: 'Include_sshd_config.d'
     option: 'Include'
     value: '/etc/ssh/sshd_config.d/*.conf'
-    state: '{{ "absent" if ansible_distribution_release in [ "stretch", "buster" ] else "present" }}'
+    state: '{{ "absent" if ansible_distribution_release in ["stretch", "buster"] else "present" }}'
 
   - name: 'Port'
     value: 22
@@ -358,6 +358,21 @@ sshd__original_configuration:
   - name: 'PasswordAuthentication'
     comment: 'To disable tunneled clear text passwords, change to no here!'
     value: True
+    state: 'init'
+
+  - name: 'ChallengeResponseAuthentication'
+    comment: |
+      Change to yes to enable challenge-response passwords (beware issues with
+      some PAM modules and threads). From openssh-server version 8.7, this option
+      is deprecated and is an alias of KbdInteractiveAuthentication.
+    value: False
+    state: 'init'
+
+  - name: 'KbdInteractiveAuthentication'
+    comment: |
+      Change to yes to enable challenge-response passwords (beware issues with
+      some PAM modules and threads)
+    value: False
     state: 'init'
 
   - name: 'PermitEmptyPasswords'
@@ -629,6 +644,22 @@ sshd__default_configuration:
                if (ansible_local.root_account.ssh_authorized_keys | d() | bool or
                    ansible_local.system_users.configured | d() | bool)
                else True }}'
+    state: 'present'
+
+  # Disable ChallengeResponseAuthentication by default. Otherwise, setting
+  # PasswordAuthentication to False is not enough to force authentication
+  # by public key. From openssh-server 8.7, ChallengeResponseAuthentication
+  # is deprecated and is an alias for KbdInteractiveAuthentication.
+  - name: 'ChallengeResponseAuthentication'
+    value: False
+    state: 'present'
+
+  # Disable KbdInteractiveAuthentication (new name of the deprecated
+  # ChallengeResponseAuthentication) by default. Otherwise, setting
+  # PasswordAuthentication to False is not enough to force authentication
+  # by public key.
+  - name: 'KbdInteractiveAuthentication'
+    value: False
     state: 'present'
 
   # Enable support for client hostname lookups by the SSH service. This is

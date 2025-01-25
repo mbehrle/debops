@@ -21,7 +21,7 @@
 
 # .. envvar:: postgresql__upstream [[[
 #
-# Enable PostgreSQL Global Developmet Group APT repository?
+# Enable PostgreSQL Global Development Group APT repository?
 # More information: https://wiki.postgresql.org/wiki/Apt
 postgresql__upstream: False
 
@@ -162,7 +162,7 @@ postgresql__user_clusters: []
 
 # .. envvar:: postgresql__roles [[[
 #
-# List of PostgresSQL roles, specified as YAML dicts. See
+# List of PostgreSQL roles, specified as YAML dicts. See
 # :ref:`postgresql__ref_roles` for more details.
 postgresql__roles: []
 
@@ -201,6 +201,21 @@ postgresql__databases: []
 # roles via dependency variables. See :ref:`postgresql__ref_databases` for more
 # details.
 postgresql__dependent_databases: []
+
+                                                                   # ]]]
+# .. envvar:: postgresql__privileges [[[
+#
+# List of PostgreSQL privileges, specified as YAML dicts. See
+# :ref:`postgresql__ref_privileges` for more details.
+postgresql__privileges: []
+
+                                                                   # ]]]
+# .. envvar:: postgresql__dependent_privileges [[[
+#
+# List of PostgreSQL privileges, specified as a YAML dicts, defined by other
+# roles via dependency variables. See :ref:`postgresql__ref_privileges` for
+# more details.
+postgresql__dependent_privileges: []
 
                                                                    # ]]]
 # .. envvar:: postgresql__extensions [[[

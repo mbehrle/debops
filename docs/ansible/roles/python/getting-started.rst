@@ -35,6 +35,13 @@ a host. Role will automatically purge an existing Python 2.x packages if Python
 2.x operation is disabled; this can be leveraged to maintain Python 3.x-only
 setup, depending on the OS release used on the host.
 
+To support environments without proper DNS service, the bootstrap playbook can
+inject host entries into the :file:`/etc/hosts` configuration file, using the
+:envvar:`python__raw_etc_hosts` variable. This can be used to configure access
+to APT repositories via a HTTP proxy, for example. After bootstrapping, the
+:ref:`debops.netbase` Ansible role takes over the :file:`/etc/hosts` config
+file management.
+
 
 Example inventory
 -----------------
@@ -80,6 +87,9 @@ Available role tags:
 
 Other resources
 ---------------
+
+The :ref:`debops.resources` role can be used to manage pip and virtual
+environments, see :ref:`resources__ref_pip` documentation for more details.
 
 List of other useful resources related to the ``debops.python`` Ansible role:
 

@@ -119,6 +119,7 @@
 .. _Ansible ansible.builtin.apt module: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html
 .. _Ansible ansible.builtin.apt_key module: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_key_module.html
 .. _Ansible ansible.builtin.apt_repository module: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html
+.. _Ansible ansible.builtin.deb822_repository module: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/deb822_repository_module.html
 .. _Ansible arista.eos.eos_acl_interfaces module: https://docs.ansible.com/ansible/latest/collections/arista/eos/eos_acl_interfaces_module.html
 .. _Ansible arista.eos.eos_acls module: https://docs.ansible.com/ansible/latest/collections/arista/eos/eos_acls_module.html
 .. _Ansible arista.eos.eos_banner module: https://docs.ansible.com/ansible/latest/collections/arista/eos/eos_banner_module.html
@@ -4878,10 +4879,8 @@
 .. _debops-contrib.kibana: https://github.com/debops-contrib/ansible-kibana
 .. _debops-contrib.elasticbeats: https://github.com/debops-contrib/ansible-elasticbeats
 .. _debops-contrib.firejail: https://github.com/debops-contrib/ansible-firejail
-.. _debops-contrib.volkszaehler: https://github.com/debops-contrib/ansible-volkszaehler
 .. _debops-contrib.homeassistant: https://github.com/debops-contrib/ansible-homeassistant
 .. _debops-contrib.neurodebian: https://github.com/debops-contrib/ansible-neurodebian
-.. _debops-contrib.bitcoind: https://github.com/debops-contrib/ansible-bitcoind
 .. ]]]
 
 .. ypid repositories [[[

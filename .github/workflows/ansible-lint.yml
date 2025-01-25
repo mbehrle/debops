@@ -17,7 +17,10 @@ jobs:
     steps:
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
+
+      - name: Install Ansible Collections for ansible-lint
+        run: 'make install-collections'
 
       - name: Run ansible-lint from main branch
         uses: 'ansible-community/ansible-lint-action@main'

@@ -13,7 +13,7 @@ Ansible inventory by copying its contents there. This should keep the existing
 ACL rules intact in case of any updates to the :ref:`debops.slapd` role.
 
 The default ACL will be updated over time when new DebOps roles are integrated
-with the LDAP directory. The DebOps documentation contains a :ref:`browseable
+with the LDAP directory. The DebOps documentation contains a :ref:`browsable
 representation of the LDAP Directory Information Tree <slapd__ref_ldap_dit>`
 that maps how various DebOps roles interact with the directory; this should
 enable easier redesign of the Access Control List according to the needs of
@@ -266,7 +266,7 @@ Group owners
 
 - The owners of the LDAP groups under the ``ou=Groups,dc=example,dc=org`` LDAP
   subtree, defined by the ``owner`` attribute, can add, modify or remove
-  members in their respecitve groups, using the ``member`` attribute.
+  members in their respective groups, using the ``member`` attribute.
 
 Object owners
 ~~~~~~~~~~~~~

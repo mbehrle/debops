@@ -8,14 +8,14 @@ on: [ 'push', 'pull_request' ]
 
 jobs:
   reuse-spdx:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
@@ -29,14 +29,14 @@ jobs:
           make check
 
   ansible-lint:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
@@ -52,14 +52,14 @@ jobs:
           make check
 
   ansible-playbook:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
@@ -74,14 +74,14 @@ jobs:
           make check
 
   ansible-galaxy:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
         with:
           fetch-depth: 0
 
@@ -104,14 +104,14 @@ jobs:
           make check
 
   yamllint:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
@@ -125,14 +125,14 @@ jobs:
           make check
 
   pycodestyle:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
@@ -146,14 +146,14 @@ jobs:
           make check
 
   shellcheck:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
@@ -167,11 +167,11 @@ jobs:
           make check
 
   docker-image:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
       - name: Build and verify Docker image
         # https://github.com/actions/runner/issues/241
@@ -179,14 +179,14 @@ jobs:
         run: 'make test-docker-build'
 
   debops-unit-test:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
         with:
           fetch-depth: 0
 
@@ -205,14 +205,15 @@ jobs:
           make check
 
   debops-wheel:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 120
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
         with:
           fetch-depth: 0
 
@@ -221,7 +222,7 @@ jobs:
           sudo apt-get -qq update
           sudo apt-get -yq install pandoc pandoc-data graphviz
           pip3 install --user --upgrade pip wheel "setuptools==65.7.0" pypandoc
-          pip3 install --user --upgrade sphinx sphinx-autobuild sphinx_rtd_theme
+          pip3 install --user --upgrade sphinx==5.3.0 sphinx-autobuild sphinx_rtd_theme
 
       - name: Build DebOps Python wheel package
         run: |
@@ -232,14 +233,15 @@ jobs:
           pip3 list | grep debops
 
   debops-sdist:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 120
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
         with:
           fetch-depth: 0
 
@@ -248,7 +250,7 @@ jobs:
           sudo apt-get -qq update
           sudo apt-get -yq install pandoc pandoc-data graphviz
           pip3 install --user --upgrade pip wheel "setuptools==65.7.0" pypandoc
-          pip3 install --user --upgrade sphinx sphinx-autobuild sphinx_rtd_theme
+          pip3 install --user --upgrade sphinx==5.3.0 sphinx-autobuild sphinx_rtd_theme
 
       - name: Build DebOps Python sdist package
         run: |
@@ -258,22 +260,45 @@ jobs:
           pip3 install --user dist/*
           pip3 list | grep debops
 
-  documentation:
-    runs-on: 'ubuntu-20.04'
+  codespell:
+    runs-on: 'ubuntu-latest'
     steps:
 
       - name: Add ~/.local/bin to $PATH
         run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
 
       - name: Clone the repository
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
+        with:
+          fetch-depth: 0
+
+      - name: Prepare test environment
+        run: |
+          pip3 install --user --upgrade pip wheel "setuptools==65.7.0"
+          pip3 install --user --upgrade codespell tomli
+
+      - name: Check common misspellings using codespell
+        run: |
+          make clean-tests
+          make test-spell
+
+  documentation:
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 120
+    steps:
+
+      - name: Add ~/.local/bin to $PATH
+        run: 'printf "%s/.local/bin\n" "${HOME}" >> ${GITHUB_PATH}'
+
+      - name: Clone the repository
+        uses: 'actions/checkout@v3'
 
       - name: Prepare test environment
         run: |
           sudo apt-get -qq update
           sudo apt-get install -yq graphviz
           pip3 install --user --upgrade pip wheel "setuptools==65.7.0"
-          pip3 install --user --upgrade sphinx sphinx-autobuild sphinx_rtd-theme
+          pip3 install --user --upgrade sphinx==5.3.0 sphinx-autobuild sphinx_rtd-theme
 
       - name: Build documentation site
         run: |

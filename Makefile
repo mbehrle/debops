@@ -46,6 +46,10 @@ versions: check-versions
 docker:         ## Check Docker image build
 docker: test-docker-build
 
+.PHONY: spell
+spell:          ## Check common misspellings using codespell
+spell: test-spell
+
 .PHONY: docs
 docs:           ## Build Sphinx documentation
 docs: test-docs
@@ -127,7 +131,7 @@ twine-upload:    ## Upload Python packages to PyPI
 	@twine upload dist/*
 
 .PHONY: test-all
-test-all: clean-tests test-spdx test-pep8 test-debops-tools test-debops-ansible_plugins test-docs test-man test-playbook-syntax test-ansible-lint test-yaml test-shell
+test-all: clean-tests test-spdx test-pep8 test-debops-tools test-debops-ansible_plugins test-spell test-docs test-man test-playbook-syntax test-ansible-lint test-yaml test-shell
 
 .PHONY: test-pep8
 test-pep8:
@@ -156,6 +160,11 @@ clean-tests:
 check-versions:
 	@./lib/tests/check-watch
 
+.PHONY: test-spell
+test-spell:
+	@printf "%s\n" "Checking common misspellings using codespell..."
+	@codespell
+
 .PHONY: test-docs
 test-docs:
 	@printf "%s\n" "Testing HTML documentation generation..."
@@ -171,18 +180,26 @@ check-links:
 	@printf "%s\n" "Checking external links in documentation..."
 	@cd docs && sphinx-build -n -b linkcheck -d _build/doctrees . _build/linkcheck
 
+ansible.cfg:
+	@printf "%s\n" "Generating new ansible.cfg file..."
+	@./lib/tests/ansible-cfg-generator
+
+.PHONY: install-collections
+install-collections: ansible.cfg
+	@printf "%s\n" "Installing Ansible Collection dependencies..."
+	@ansible-galaxy collection install -v -r requirements.yml
+
 .PHONY: test-playbook-syntax
-test-playbook-syntax:
+test-playbook-syntax: ansible.cfg install-collections
 	@printf "%s\n" "Testing Ansible playbook syntax..."
-	@ANSIBLE_ROLES_PATH="ansible/roles" ANSIBLE_HOST_PATTERN_MISMATCH=ignore \
-	 ANSIBLE_COLLECTIONS_PATH="ansible/collections:$(HOME)/.ansible/collections:/usr/share/ansible/collections" \
+	@ANSIBLE_HOST_PATTERN_MISMATCH=ignore \
 	 ansible-playbook --syntax-check ansible/playbooks/bootstrap.yml \
 		                         ansible/playbooks/bootstrap-ldap.yml \
 		                         ansible/playbooks/bootstrap-sss.yml \
 		                         ansible/playbooks/site.yml
 
 .PHONY: test-ansible-lint
-test-ansible-lint:
+test-ansible-lint: ansible.cfg
 	@printf "%s\n" "Checking Ansible content using ansible-lint..."
 	@ansible-lint -v
 
@@ -204,5 +221,10 @@ test-debops-ansible_plugins:
 .PHONY: fail-if-git-dirty
 fail-if-git-dirty:
 	@git diff --quiet && git diff --cached --quiet || ( \
-		printf "%s\n" "Sanity check: uncommited git changes detected" ; \
+		printf "%s\n" "Sanity check: uncommitted git changes detected" ; \
 		git status --short ; exit 1 )
+
+.PHONY: pc precommit pre-commit
+precommit:      ## Run pre-commit on all files
+pc precommit pre-commit:
+	@pre-commit run --all

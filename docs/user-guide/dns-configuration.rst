@@ -42,6 +42,7 @@ zone for your local setup:
 Role                              Variable                            Default                                                              Example
 ================================= =================================== ==================================================================== ==============================
 :ref:`debops.apt_cacher_ng`       :envvar:`apt_cacher_ng__fqdn`       ``software-cache.`` + ``{{ ansible_domain }}``                       ``software-cache.example.com``
+:ref:`debops.bind`                :envvar:`bind__fqdn`                ``dns.`` + :envvar:`bind__domain`                                    ``dns.example.com``
 :ref:`debops.docker_registry`     :envvar:`docker_registry__fqdn`     ``registry.`` + :envvar:`docker_registry__domain`                    ``registry.example.com``
 :ref:`debops.dokuwiki`            :envvar:`dokuwiki__fqdn`            ``wiki.`` + ``{{ ansible_domain }}``                                 ``wiki.example.com``
 :ref:`debops.etesync`             :envvar:`etesync__fqdn`             ``etesync.`` + :envvar:`etesync__domain`                             ``etesync.example.com``
@@ -67,7 +68,6 @@ Role                              Variable                            Default   
 :ref:`debops.secret`              :envvar:`secret__ldap_fqdn`         ``ldap.`` + :envvar:`secret__ldap_domain`                            ``ldap.example.com``
 ``debops.foodsoft``               ``foodsoft__fqdn``                  ``foodsoft.`` + ``foodsoft__domain``                                 ``foodsoft.example.com``
 ``debops.homeassistant``          ``homeassistant__fqdn``             ``ha.`` + ``homeassistant__domain``                                  ``ha.example.com``
-``debops.volkszaehler``           ``volkszaehler__fqdn``              ``vz.`` + ``volkszaehler__domain``                                   ``vz.example.com``
 ================================= =================================== ==================================================================== ==============================
 
 

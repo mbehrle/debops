@@ -172,7 +172,18 @@
     group: 'root'
     mode: '0644'
   register: lxc__register_net_systemd
-  when: lxc__net_deploy_state == 'present'
+  when: lxc__net_deploy_state == 'present' and lxc__net_resolver == "resolvconf"
+  tags: [ 'role::lxc:net' ]
+
+- name: Hook lxc-net-systemd-resolved script to the lxc-net service
+  ansible.builtin.template:
+    src: 'etc/systemd/system/lxc-net.service.d/systemd-resolved.conf.j2'
+    dest: '/etc/systemd/system/lxc-net.service.d/systemd-resolved.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  register: lxc__register_net_systemd
+  when: lxc__net_deploy_state == 'present' and lxc__net_resolver == "systemd-resolved"
   tags: [ 'role::lxc:net' ]
 
 - name: Reconfigure systemd services when modified
@@ -327,17 +338,17 @@
                                                 in ansible_local.lxc.containers | d())
                                             else "stopped") }}'
     template:            '{{ item.template | d(lxc__default_container_template) }}'
-    template_options:    '{{ item.template_options | d((template_options | join(" "))
+    template_options:    '{{ item.template_options | d((lxc__var_template_options | join(" "))
                                                        if ((item.template
                                                             | d(lxc__default_container_template)) == "download")
                                                        else omit) }}'
     thinpool:            '{{ item.thinpool | d(omit) }}'
     vg_name:             '{{ item.vg_name | d(omit) }}'
-    vfs_root:            '{{ item.zfs_root | d(omit) }}'
+    zfs_root:            '{{ item.zfs_root | d(omit) }}'
   environment:
     DOWNLOAD_KEYSERVER: '{{ ansible_local.keyring.keyserver | d("hkp://keyserver.ubuntu.com") }}'
   vars:
-    template_options:
+    lxc__var_template_options:
       - '--dist {{ (item.distribution | d(lxc__default_container_distribution)) | lower }}'
       - '--release {{ (item.release | d(lxc__default_container_release)) | lower }}'
       - '--arch {{ (item.architecture | d(lxc__default_container_architecture)) | lower }}'
@@ -350,6 +361,8 @@
 - name: Configure static MAC addresses for new LXC containers
   ansible.builtin.command: lxc-hwaddr-static {{ item.name | d(item) }}
   loop: '{{ lxc__containers }}'
+  register: lxc__register_hwaddr_static
+  changed_when: lxc__register_hwaddr_static.changed | bool
   when: ansible_local | d() and ansible_local.lxc | d() and
         (item.name | d(item)) not in ansible_local.lxc.containers | d() and
         item.state | d("started") == "started"
@@ -431,6 +444,8 @@
        printf "Waiting for network connection inside container to settle...\n" ; sleep 5
     done
   loop: '{{ lxc__containers }}'
+  register: lxc__register_prepare_ssh
+  changed_when: lxc__register_prepare_ssh.changed | bool
   when: ansible_local | d() and ansible_local.lxc | d() and
         (item.name | d(item)) not in ansible_local.lxc.containers | d() and
         (item.ssh | d(lxc__default_container_ssh)) | bool and item.state | d("started") == "started"

@@ -30,10 +30,10 @@
     # * ansible/roles/reprepro/defaults/main.yml
     # * ansible/playbooks/tools/dist-upgrade.yml
     dist_upgrade_version_map:
-      'jessie': 'stretch'
       'stretch': 'buster'
       'buster': 'bullseye'
-      # 'bullseye': 'bookworm'
+      'bullseye': 'bookworm'
+      #'bookworm': 'trixie'
       'trusty': 'utopic'
 
     # Current release
@@ -145,6 +145,8 @@
       ansible.builtin.shell: "set -o nounset -o pipefail -o errexit && grep -lrIZ 'Pin: release .*={{ dist_upgrade_current_release }}-backports' /etc/apt/preferences.d | xargs -0 rm -f -- || true"  # noqa no-handler
       args:
         executable: 'bash'
+      register: dist_upgrade_register_remove
+      changed_when: dist_upgrade_register_remove.changed | bool
       when: dist_upgrade_register_replace is defined and dist_upgrade_register_replace is changed
 
     - name: Create a lockfile
@@ -207,7 +209,8 @@
         group: 'root'
         mode: '0644'
         backup: False
-      when: dist_upgrade_register_etc_services is defined and
+      when: dist_upgrade_register_etc_services is not skipped and
+            dist_upgrade_register_etc_services is defined and
             dist_upgrade_register_etc_services.stat.exists
 
     - name: Remove the lockfile

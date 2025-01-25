@@ -54,7 +54,6 @@ etc.
 - ``debops-contrib.foodsoft``
 - ``debops-contrib.homeassistant``
 - ``debops-contrib.kodi``
-- ``debops-contrib.volkszaehler``
 
 
 Application environments
@@ -90,8 +89,8 @@ are not accessed directly by end users.
 
 - :ref:`debops.ansible`
 - :ref:`debops.apt_cacher_ng`
+- :ref:`debops.apt_mirror`
 - :ref:`debops.controller` - install DebOps on other hosts
-- :ref:`debops.debops_api`
 - :ref:`debops.gitlab_runner`
 - :ref:`debops.fcgiwrap`
 - :ref:`debops.freeradius`
@@ -111,7 +110,6 @@ are not accessed directly by end users.
 - :ref:`debops.tinyproxy`
 - :ref:`debops.reprepro`
 - ``debops.sks``
-- ``debops-contrib.bitcoind``
 - ``debops-contrib.x2go_server``
 
 
@@ -136,6 +134,7 @@ Databases
 - :ref:`debops.redis_sentinel`
 - :ref:`debops.slapd`
 - :ref:`debops.influxdb`
+- :ref:`debops.influxdb2`
 - :ref:`debops.influxdb_server`
 - ``debops.phpmyadmin``
 
@@ -157,6 +156,7 @@ Domain Name System
 It's always DNS.
 
 - :ref:`debops.avahi`
+- :ref:`debops.bind`
 - :ref:`debops.dnsmasq`
 - :ref:`debops.netbase`
 - :ref:`debops.pdns`
@@ -297,8 +297,10 @@ packages.
 - :ref:`debops.apt_listchanges`
 - :ref:`debops.apt_install`
 - :ref:`debops.apt_mark`
+- :ref:`debops.apt_mirror`
 - :ref:`debops.apt_preferences`
 - :ref:`debops.apt_proxy`
+- :ref:`debops.debconf`
 - :ref:`debops.debops_legacy`
 - :ref:`debops.extrepo`
 - :ref:`debops.keyring`
@@ -309,6 +311,7 @@ packages.
 Security
 --------
 
+- :ref:`debops.apparmor`
 - :ref:`debops.auth`
 - :ref:`debops.authorized_keys`
 - :ref:`debops.fail2ban`
@@ -323,7 +326,6 @@ Security
 - :ref:`debops.system_groups`
 - :ref:`debops.system_users`
 - :ref:`debops.tcpwrappers`
-- ``debops-contrib.apparmor``
 - ``debops-contrib.firejail``
 
 
@@ -346,6 +348,7 @@ System configuration
 - :ref:`debops.machine`
 - :ref:`debops.mount`
 - :ref:`debops.netbase`
+- :ref:`debops.nixos`
 - :ref:`debops.nslcd`
 - :ref:`debops.nsswitch`
 - :ref:`debops.ntp`

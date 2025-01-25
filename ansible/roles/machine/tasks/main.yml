@@ -76,11 +76,11 @@
 
 - name: Add/remove diversion of packaged MOTD scripts
   vars:
-    divert_path: '{{ "/etc/update-motd.d/"
-                      + item.filename | d(("%02d" | format(item.weight | int)) | string + "-" + item.name) }}'
+    machine__var_divert_path: '{{ "/etc/update-motd.d/"
+                                  + item.filename | d(("%02d" | format(item.weight | int)) | string + "-" + item.name) }}'
   debops.debops.dpkg_divert:
-    path: '{{ divert_path }}'
-    divert: '{{ divert_path + ".disabled" }}'
+    path: '{{ machine__var_divert_path }}'
+    divert: '{{ machine__var_divert_path + ".disabled" }}'
     state: '{{ "present"
                if (machine__enabled | bool and
                    item.state | d("present") not in ["absent", "revert"])
@@ -129,6 +129,8 @@
             + machine__register_motd_scripts_created.results }}'
   loop_control:
     label: '{{ item.item.name }}'
+  register: machine__register_remove_unknown
+  changed_when: machine__register_remove_unknown.changed | bool
   when: (item.item.name | d() and not item.item.divert | d(False) | bool and
          item.item.filename is undefined and item is changed)
 

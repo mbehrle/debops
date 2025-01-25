@@ -142,7 +142,7 @@ root_account__shell: ''
 
 # .. envvar:: root_account__dotfiles_enabled [[[
 #
-# Enable or disable dotfiles management, depending on the availablility of the
+# Enable or disable dotfiles management, depending on the availability of the
 # dotfiles repository installed by the :ref:`debops.yadm` role.
 root_account__dotfiles_enabled: '{{ True
                                     if ansible_local.yadm.dotfiles | d()
@@ -200,6 +200,12 @@ root_account__combined_authorized_keys: '{{ root_account__authorized_keys
 # If ``False``, the public SSH keys defined in the above variable will be added
 # to the existing keys on the ``root`` account.
 root_account__authorized_keys_exclusive: False
+
+                                                                   # ]]]
+# .. envvar:: root_account__authorized_keys_follow [[[
+#
+# If ``True``, follow symlinks instead of replacing the file.
+root_account__authorized_keys_follow: False
 
                                                                    # ]]]
 # .. envvar:: root_account__authorized_keys_state [[[

@@ -7,7 +7,7 @@
 {% for interface in (dnsmasq__combined_interfaces | flatten | debops.debops.parse_kv_items) %}
 {%   set dnsmasq__tpl_ipv4 = [] %}
 {%   set dnsmasq__tpl_ipv6 = [] %}
-{%   if hostvars[inventory_hostname]["ansible_" + interface.name] | d() %}
+{%   if not interface.ignore_interface_addresses|d(False) and hostvars[inventory_hostname]["ansible_" + interface.name] | d() %}
 {%     if hostvars[inventory_hostname]["ansible_" + interface.name].ipv4 | d() %}
 {%       set _ = dnsmasq__tpl_ipv4.append(hostvars[inventory_hostname]["ansible_" + interface.name].ipv4.address + '/'
                                           + (hostvars[inventory_hostname]["ansible_" + interface.name].ipv4.address + '/'
@@ -81,10 +81,15 @@
 }) %}
 {%       endfor %}
 {%       for host_address in dnsmasq__tpl_ipv6 %}
+{%         if (interface.dhcp_ipv6_mode is string and interface.dhcp_ipv6_mode == '') %}
+{%           set ra_separator = '' %}
+{%         else %}
+{%           set ra_separator = ',' %}
+{%         endif %}
 {%         set _ = interface_options.append({
   "name": ("dhcp_range_" + (host_address | replace(':','_') | replace('/','_'))),
   "option": "dhcp-range",
-  "value": ("set:" + interface_tag + "," + host_address | ansible.utils.ipv6(interface.dhcp_range_start | d(10) | int) | ansible.utils.ipv6('address') + ',' + host_address | ansible.utils.ipv6(interface.dhcp_range_end | d(-10) | int) | ansible.utils.ipv6('address') + ',' + interface.dhcp_ipv6_mode | d("ra-names,ra-stateless,slaac") + "," + host_address | ansible.utils.ipv6('prefix') | string + ',' + interface.dhcp_lease | d('24h'))
+  "value": ("set:" + interface_tag + "," + host_address | ansible.utils.ipv6(interface.dhcp_range_start | d(10) | int) | ansible.utils.ipv6('address') + ',' + host_address | ansible.utils.ipv6(interface.dhcp_range_end | d(-10) | int) | ansible.utils.ipv6('address') + ',' + interface.dhcp_ipv6_mode | d("ra-names,ra-stateless,slaac") + ra_separator + host_address | ansible.utils.ipv6('prefix') | string + ',' + interface.dhcp_lease | d('24h'))
 }) %}
 {%       endfor %}
 {%     endif %}

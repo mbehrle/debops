@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # DebOps documentation build configuration file
 # Copyright (C) 2014-2022 DebOps <https://debops.org/>
@@ -49,7 +48,7 @@ for element in os.listdir(rst_ansible_roles):
                                   % defaults_dir)
 
                     # Only rebuild files that have changed, thus
-                    # taking avantage of the sphinx cache
+                    # taking advantage of the sphinx cache
                     dst_file = (
                             os.path.splitext(defaults_file)[0] + '.rst'
                         ).lstrip('../')
@@ -111,6 +110,7 @@ def setup(app):
 extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.graphviz',
+    'sphinx_rtd_theme',
     'autolink'
 ]
 
@@ -129,7 +129,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'DebOps'
 author = u'Maciej Delmanowski, Nick Janetakis, Robin Schneider and others'
-copyright = u'2014-2022, {}'.format(author)
+copyright = u'2014-2024, {}'.format(author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -197,7 +197,7 @@ highlight_language = 'YAML'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Check if build is performed on ReadTheDocs.org infrastructure
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -206,7 +206,6 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     try:
         import sphinx_rtd_theme
         html_theme = 'sphinx_rtd_theme'
-        html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
         html_theme_options = {
             'collapse_navigation': True,
             'logo_only': False
@@ -391,6 +390,9 @@ man_pages.append(('user-guide/scripts/debops-run/man_index', 'debops-run',
 man_pages.append(('user-guide/scripts/debops-run/man_index', 'debops-check',
                   'Execute Ansible playbooks in DebOps environments in check mode',
                   [author], 1))
+man_pages.append(('user-guide/scripts/debops-env/man_index', 'debops-env',
+                  'Execute external commands in DebOps project environment',
+                  [author], 1))
 man_pages.append(('user-guide/scripts/debops-config/man_index', 'debops-config',
                   'Inspect or manipulate DebOps project configuration', [author], 1))
 
@@ -463,7 +465,7 @@ epub_copyright = u'2014-2019, Maciej Delmanowski'
 # The format is a list of tuples containing the path and title.
 # epub_pre_files = []
 
-# HTML files shat should be inserted after the pages created by sphinx.
+# HTML files that should be inserted after the pages created by sphinx.
 # The format is a list of tuples containing the path and title.
 # epub_post_files = []
 

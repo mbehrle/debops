@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # Copyright (C) 2014-2019 Hartmut Goebel <h.goebel@crazy-compilers.com>
 # Copyright (C) 2014-2020 Maciej Delmanowski <drybjed@gmail.com>
@@ -8,7 +7,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # Installation in development mode:
-#   pip3 install --user --editable .
+#   pipx install --editable .
 
 from setuptools import setup, find_packages
 import subprocess
@@ -37,13 +36,7 @@ def find_files(directory, strip):
     return result
 
 
-try:
-    import pypandoc
-    README = pypandoc.convert_file('README.md', 'rst')
-except (IOError, ImportError):
-    print('Warning: The "pandoc" support is required to convert '
-          'the README.md to reStructuredText format')
-    README = open('README.md').read()
+README = open('README.md').read()
 
 try:
     unicode
@@ -60,9 +53,14 @@ except NameError:
 # Python package
 try:
     with open(os.devnull, 'w') as devnull:
-        RELEASE = subprocess.check_output(
-                ['git', 'describe'], stderr=devnull
-                ).strip().lstrip(b'v').decode('utf-8')
+        GIT_RELEASE = subprocess.check_output(
+                      ['git', 'describe'], stderr=devnull
+                      ).strip().lstrip(b'v').decode('utf-8').split('-')
+        if len(GIT_RELEASE) > 1:
+            RELEASE = (GIT_RELEASE[0] + '.dev' + GIT_RELEASE[1]
+                       + '+' + GIT_RELEASE[2])
+        else:
+            RELEASE = GIT_RELEASE[0]
 except subprocess.CalledProcessError:
     try:
         RELEASE = open('VERSION').read().strip()
@@ -96,7 +94,7 @@ else:
 
 setup(
     install_requires=['distro', 'future', 'jinja2', 'pyyaml',
-                      'pyxdg', 'toml', 'python-dotenv'],
+                      'pyxdg', 'toml', 'python-dotenv', 'gitpython'],
     extras_require={
         'ansible': ['ansible', 'netaddr', 'passlib',
                     'python-ldap', 'dnspython', 'pyopenssl']
@@ -126,6 +124,7 @@ setup(
     version=unicode(RELEASE),
     description='Your Debian-based data center in a box',
     long_description=README,
+    long_description_content_type='text/markdown',
     author='DebOps Developers',
     author_email='debops-devel@lists.debops.org',
     url='https://debops.org/',

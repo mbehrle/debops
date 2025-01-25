@@ -105,7 +105,7 @@ for role in "${!debops_role_map[@]}" ; do
     if [ -f "ansible/playbooks/service/${role}.yml" ] ; then
         read -r -a dependencies_in_playbooks <<<"$(git grep -h --word-regexp -e "role::.*" \
                                                             --and --not -e "role::${role}" \
-                                                            ansible/playbooks/service/${role}.yml \
+                                                            "ansible/playbooks/service/${role}.yml" \
                                                    | sed -e "s/^.*role:://" -e "s/'.*$//" \
                                                    | tr '\n' ' ')" || true
         if [ -n "${dependencies_in_playbooks[*]+x}" ] ; then
@@ -294,11 +294,8 @@ for collection in "${collections[@]}" ; do
     read -r -a collection_roles <<<"${role_collection_map[${collection}]}"
     for role in * ; do
         if [[ ${role} != debops-contrib.* ]] \
-            && [[ ${role} != apparmor ]] \
             && [[ ${role} != boxbackup ]] \
-            && [[ ${role} != bitcoind ]] \
             && [[ ${role} != btrfs ]] \
-            && [[ ${role} != dropbear_initramfs ]] \
             && [[ ${role} != firejail ]] \
             && [[ ${role} != foodsoft ]] \
             && [[ ${role} != fuse ]] \
@@ -306,7 +303,6 @@ for collection in "${collections[@]}" ; do
             && [[ ${role} != kodi ]] \
             && [[ ${role} != snapshot_snapper ]] \
             && [[ ${role} != tor ]] \
-            && [[ ${role} != volkszaehler ]] \
             && [[ ${role} != x2go_server ]] \
             && [[ ${role} != rails_deploy ]] ; then
             for role_in_collection in "${collection_roles[@]}" ; do
@@ -362,12 +358,10 @@ for collection in "${collections[@]}" ; do
         fi
     done
 
-    # Create meta/runtime.yml metadata file
+    # Copy meta/runtime.yml metadata file
     mkdir "${workdir_map[${collection}]}/meta"
-    cat <<EOF > "${workdir_map[${collection}]}/meta/runtime.yml"
----
-requires_ansible: ">=2.10"
-EOF
+    cp ansible/collections/ansible_collections/debops/debops/meta/runtime.yml \
+        "${workdir_map[${collection}]}/meta/runtime.yml"
 
     # Generate the 'galaxy.yml' file
     if [ "${collection}" == "${collections[0]}" ] ; then
@@ -414,6 +408,7 @@ dependencies:
   "ansible.posix": "*"
   "ansible.utils": "*"
   "community.crypto": "*"
+  "community.docker": "*"
   "community.general": "*"
   "community.libvirt": "*"
   "community.mysql": "*"
